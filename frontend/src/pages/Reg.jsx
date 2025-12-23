@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../api/axios'; 
 
 const Register = () => {
   const navigate = useNavigate();
+  
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    navigate('/notes');
+    try {
+      
+      const response = await api.post("/api/auth/register", formData);
+      
+      if (response.status === 200) {
+        navigate('/notes');
+      }
+    } catch (error) {
+      
+      console.error("Registration Error:", error.response?.data?.message);
+      alert(error.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -22,6 +41,9 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
             <input 
               type="text" 
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
               placeholder="John Doe"
             />
@@ -30,6 +52,9 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input 
               type="email" 
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
               placeholder="name@example.com"
             />
@@ -38,6 +63,9 @@ const Register = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input 
               type="password" 
+              required
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
               placeholder="••••••••"
             />
